@@ -8,18 +8,15 @@ setlocal enabledelayedexpansion
 :: Instructions:
 :: 1) Edit the supplied beancounturi.reg file, and replace the string 'YOURUSERNAME'
 ::    with your Windows username
-:: 2) Save the file to a known location and double click the file to install the
-::    registry value
-:: 3) In the lines below where indicated, replace 'YOURUSERNAME' with your username, and
-::    replace the path if needed (usually not needed)
-:: 4) In the last line below, replace the editor with the one of your choice installed
+:: 2) Save and double click beancounturi.reg to install the registry value
+:: 3) In the last line below, replace the editor with the one of your choice installed
 ::    on your system, and its arguments as required
-:: 5) Copy this .bat file to th C:\Users\YOURUSERNAME\beancountopen.bat (as indicated in
+:: 4) Copy this .bat file to C:\Users\YOURUSERNAME\beancountopen.bat (as indicated in
 ::    the .reg file)
-:: 6) Clicking on a beancount:// uri in your browser (or in any other application)
+:: 5) Clicking on a beancount:// uri in your browser (or in any other application)
 ::    should now open the file in your editor at the line name given
 :: 
-:: Notes: URI example: beancount:///home/YOURUSERNAME/beancount/Credit-Card.bc?lineno=647
+:: Notes: URI example: beancount:///cygdrive/c/Users/YOURUSERNAME/beancount/Credit-Card.bc?lineno=647
 :: This is changed to: "C:\Program Files (x86)\Vim\vim74\gvim.exe"  C:/Users/YOURUSERNAME/Documents/beancount/Credit-Card.bc +647
 :: 
 
@@ -40,18 +37,23 @@ set lineno=%lineno:~1%
 :: echo %lineno%
 
 :: Extract filename
+:: echo URL: %url%
+:: echo Lineno: %lineno%
 call set file=%%url:!lineno!=%%
+:: echo File-portion: %file%
 set file=%file:~0,-8%
+:: echo CygFile: %file%
 
-:: REPLACE root directory with custom root (since cygwin paths are different from native
+:: Replace root directory with custom root (since cygwin paths are different from native
 :: Windows paths)
-Set "Pattern=/home/YOURUSERNAME"
-Set "Replace=C:/Users/YOURUSERNAME/Documents/docs.sync/accounts/beancount"
+Set "Pattern=/cygdrive/c"
+Set "Replace=C:/"
 Set "File=!File:%Pattern%=%Replace%!"
+:: echo WinFile: %file%
 
 :: DEBUG:
-:: echo File: %file%
-:: echo Line: %lineno%
+::echo File: %file%
+::echo Line: %lineno%
 
 :: REPLACE this with the editor of your choice:
 "C:\Program Files (x86)\Vim\vim74\gvim.exe" %file%   +%lineno%
