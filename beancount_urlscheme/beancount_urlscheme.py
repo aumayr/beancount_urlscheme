@@ -21,7 +21,6 @@ def get_resource_path(path):
 # print get_resource_path('resource1/foo.txt')
 
 def run(arguments):
-    #settings_path = resource_filename(Requirement.parse("beancount_urlscheme"), "beancount_urlscheme/beancount-urlscheme-settings.conf")
     settings_path = get_resource_path("beancount-urlscheme-settings.conf")
     parser = argparse.ArgumentParser(description=__doc__,
             formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -29,7 +28,7 @@ def run(arguments):
     subparsers = parser.add_subparsers(dest='subcommand')
 
     subparser = subparsers.add_parser('register', help='Register the URL scheme in your OS.')
-    subparser.add_argument('settings', type=str, help='Path to the fava settings file')
+    subparser.add_argument('cmd', type=str, help='Command to execute when a beancount link is opened (eg. "subl {filename}:{line}")')
 
     subparser = subparsers.add_parser('open', help='Open the specified file in the editor.')
     subparser.add_argument('--line', type=int, default=1, help="The line to go to.")
@@ -42,7 +41,7 @@ def run(arguments):
             config = configparser.ConfigParser()
             config.read(settings_path)
 
-            config.set('beancount-urlscheme', 'fava-settings-file', args.settings)
+            config.set('beancount-urlscheme', 'external-editor-cmd', args.cmd)
 
             with open(settings_path, 'w') as configfile:
                 config.write(configfile)
@@ -58,10 +57,7 @@ def run(arguments):
     elif args.subcommand == "open":
         config = configparser.ConfigParser()
         config.read(settings_path)
-        settings_path = config['beancount-urlscheme']['fava-settings-file']
-        config.read(settings_path)
-
-        command = config['fava']['external-editor-cmd'].format(filename=args.file, line=args.line)
+        command = config['beancount-urlscheme']['external-editor-cmd'].format(filename=args.file, line=args.line)
         call(command.split(' '))
 
 def main():
